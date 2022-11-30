@@ -9,7 +9,6 @@ import {
   Form,
   Button,
   Card,
-  ListGroupItem,
 } from "react-bootstrap";
 import Message from "../components/Message";
 import { addToCart, removeFromCart } from "../actions/cartActions";
@@ -20,6 +19,8 @@ const CartScreen = () => {
   const { search } = useLocation();
   const qty = search ? Number(search.split("=")[1]) : 1; // splits the ?qty=1 into two parts separated by =, we need the value on index 1.
   const productId = id;
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
@@ -39,7 +40,12 @@ const CartScreen = () => {
   };
 
   const checkoutHandler = () => {
-    navigate("/login?redirect=shipping");
+    // navigate("/login?redirect=shipping");
+    if (!userInfo) {
+      navigate("/login");
+    } else {
+      navigate("/shipping");
+    }
   };
 
   return (
@@ -107,16 +113,16 @@ const CartScreen = () => {
                 .reduce((acc, item) => acc + item.qty * item.price, 0)
                 .toFixed(2)}
             </ListGroup.Item>
-            <ListGroup.Item>
+            
               <Button
                 type="button"
-                className="btn-block"
+                className="d-grid gap-2"
                 disabled={cartItems.length === 0}
                 onClick={checkoutHandler}
               >
                 Proceed To Checkout
               </Button>
-            </ListGroup.Item>
+            
           </ListGroup>
         </Card>
       </Col>
